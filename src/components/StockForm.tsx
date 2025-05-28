@@ -6,48 +6,68 @@ import {
   type FormEvent,
   type MouseEvent,
 } from "react";
-import { StockContext } from "../context";
+import { SocketContext, StockContext } from "../context";
 import { getPeers, getStockPrice } from "../api";
-import { useWebSocket } from "../hooks";
-
-export interface StockResponse {
-  currency?: string;
-  description?: string;
-  displaySymbol?: string;
-  figi?: string;
-  isin?: null;
-  mic?: string;
-  shareClassFIGI?: string;
-  symbol?: string;
-  symbol2?: string;
-  type?: string;
-}
+import type { StockResponse } from "../interfaces";
 
 export const StockForm = () => {
+  const { socket } = useContext(SocketContext);
+  const { handleSetStock } = useContext(StockContext);
   const [stocks, setStocks] = useState<StockResponse[]>([]);
-  const { handleSetStock, handleStockInfo } = useContext(StockContext);
-  const { socket } = useWebSocket(
-    "wss://ws.finnhub.io?token=d0p4mh9r01qr8ds1gd7gd0p4mh9r01qr8ds1gd80"
-  );
+  const [stockSelected, setStockSelected] = useState("");
+  const [searchStock, setSearchStock] = useState("");
+  const [referencePrice, setReferencePrice] = useState("");
+  const [filteredStocks, setFilteredStocks] = useState<StockResponse[]>([]);
 
-  const handleSelectStock = async (e: ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value);
-    handleSetStock(e.target.value);
+  const handleSearchStock = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchStock(e.target.value);
+    setFilteredStocks(
+      stocks.filter(
+        (stock) =>
+          stock.symbol?.toLocaleLowerCase().includes(e.target.value) ||
+          stock.description?.toLocaleLowerCase().includes(e.target.value)
+      )
+    );
 
-    const stockInfo = await getStockPrice(e.target.value);
-    handleStockInfo(stockInfo);
+    if (e.target.value.trim() === "") setFilteredStocks(stocks);
   };
 
-  const handleSubmit = (
+  const handleSelectStock = async (e: ChangeEvent<HTMLSelectElement>) => {
+    setStockSelected(e.target.value);
+  };
+
+  const handleSubmit = async (
     e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
   ) => {
     e.preventDefault();
+
+    if (!stockSelected) return;
+
+    const stockInfo = await getStockPrice(stockSelected);
+
+    socket?.send(JSON.stringify({ type: "subscribe", symbol: stockSelected }));
+    handleSetStock({
+      ...stockInfo,
+      symbol: stockSelected,
+      referencePrice: Number(referencePrice),
+    });
+    setSearchStock("");
+    setStockSelected("");
+    setReferencePrice("");
+    setFilteredStocks(stocks);
+  };
+
+  const handleChangeReferencePriceValue = (
+    e: ChangeEvent<HTMLInputElement>
+  ) => {
+    setReferencePrice(e.target.value);
   };
 
   useEffect(() => {
     (async () => {
       const response = await getPeers();
 
+      setFilteredStocks(response);
       setStocks(response);
     })();
   }, []);
@@ -55,20 +75,40 @@ export const StockForm = () => {
   return (
     <div className="stock-form__container">
       <form className="sotck-form" onSubmit={handleSubmit}>
-        <select className="stock-form__select" onChange={handleSelectStock}>
-          {stocks.map((stock) => (
-            <option key={stock.symbol} value={stock.symbol}>
-              {stock.symbol}
+        <input
+          type="text"
+          placeholder="Search a Stock"
+          onChange={handleSearchStock}
+          value={searchStock}
+        />
+
+        <select
+          className="stock-form__select"
+          onChange={handleSelectStock}
+          value={stockSelected}
+        >
+          <option value="" disabled>
+            Select a Stock
+          </option>
+          {filteredStocks?.map((stock) => (
+            <option key={stock?.symbol} value={stock?.symbol}>
+              {stock?.symbol} - {stock?.description}
             </option>
           ))}
         </select>
+
         <input
           className="stock-form__input"
           type="text"
-          placeholder="Value reference"
+          placeholder="Value reference in USD"
+          onChange={handleChangeReferencePriceValue}
+          value={referencePrice}
         />
 
         <button
+          disabled={
+            !stockSelected.trim().length && !referencePrice.trim().length
+          }
           className="stock-form__button"
           type="submit"
           onClick={handleSubmit}

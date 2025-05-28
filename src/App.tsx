@@ -1,19 +1,21 @@
-import "./styles/App.css";
 import { StockCard, StockForm, StockGraph } from "./components";
-import { StockProvider } from "./context";
+import { SocketProvider, StockProvider } from "./context";
+import "./styles/App.css";
 
 function App() {
   return (
     <StockProvider>
-      <div className="container">
-        <div className="stock-header">
-          <StockCard />
+      <SocketProvider>
+        <div className="container">
+          <div className="stock-header">
+            <StockCard />
+          </div>
+          <div className="stock-content">
+            <StockForm />
+            <StockGraph />
+          </div>
         </div>
-        <div className="stock-content">
-          <StockForm />
-          <StockGraph />
-        </div>
-      </div>
+      </SocketProvider>
     </StockProvider>
   );
 }

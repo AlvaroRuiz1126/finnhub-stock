@@ -6,11 +6,12 @@ const fetchData = async (path: string) =>
 
 export const getPeers = async () => {
   const response = await fetchData("stock/symbol?exchange=US&currecny=USD");
+  // const response = await fetchData("forex/symbol?exchange=usd");
   const data = await response.json();
-  console.log(
-    "common stock",
-    data.filter((stock) => stock.type === "Common Stock")
-  );
+  // console.log(
+  //   "common stock",
+  //   data.filter((stock: any) => stock.type === "Common Stock")
+  // );
 
   return data;
 };

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
-export const useWebSocket = (wssPath: string) => {
+let lastStockPrice = 0;
+
+export const useWebSocket = (wssPath: string, stocks: any[], handleUpdateStocks: (traceStock: any) => void) => {
   const [socket, setSocket] = useState<WebSocket>();
 
   const createSocketConnection = useCallback(() => {
@@ -8,27 +10,14 @@ export const useWebSocket = (wssPath: string) => {
 
     connection.onopen = () => {
       console.log("WebSocket connected");
-      //   connection.send(JSON.stringify({ type: "subscribe", symbol: "AAPL" }));
-      connection.send(
-        JSON.stringify({ type: "subscribe", symbol: "BINANCE:BTCUSDT" })
-      );
-      //   connection.send(
-      //     JSON.stringify({ type: "subscribe", symbol: "IC MARKETS:1" })
-      //   );
-    };
-
-    connection.onmessage = (event) => {
-      console.log("Message from websocket", event);
     };
 
     connection.onerror = (error) => {
       console.error("WebSocket error: ", error);
-      //   connection.close();
     };
 
     connection.onclose = () => {
       console.log("WebSocket connection closed");
-      //   createSocketConnection();
     };
 
     setSocket(connection);
@@ -39,15 +28,40 @@ export const useWebSocket = (wssPath: string) => {
 
     return () => {
       if (socket) {
-        socket.send(
-          JSON.stringify({ type: "unsubscribe", symbol: "BINANCE:BTCUSDT" })
-        );
         socket.close();
       }
     };
   }, [wssPath]);
 
-  console.log("socket", socket);
+  useEffect(() => {
+    if(socket) {
+      socket.onmessage = (event) => {
+        console.log("Message from websocket data", JSON.parse(event.data));
+        const message = JSON.parse(event.data);
+
+        if (message.type === "trade") {
+          console.log("trade event received");
+          const percentageChange = ((message.data[0].p - lastStockPrice) / lastStockPrice) * 100;
+
+          const newStocks = stocks.map((stock) => {
+            if (stock.symbol === message.data[0].s) {
+              return {
+                ...stock,
+                c: message.data[0].p,
+                percentageChange: percentageChange.toFixed(2),
+              }
+            }
+
+            return stock;
+          })
+
+          handleUpdateStocks(newStocks);
+
+          lastStockPrice = message.data[0].p;
+        }
+      };
+    }
+  }, [stocks])
 
   return { socket };
 };

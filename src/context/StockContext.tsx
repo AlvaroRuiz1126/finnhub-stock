@@ -1,10 +1,7 @@
 import { createContext, useState, type JSX } from "react";
-
 interface StockContext {
-  stock: string;
-  stockInfo: any;
-  handleSetStock: (traceStock: string) => void;
-  handleStockInfo: (stockPrices: any) => void;
+  stocks: any[];
+  handleSetStock: (traceStock: any) => void;
 }
 
 export const StockContext = createContext({} as StockContext);
@@ -14,19 +11,19 @@ export const StockProvider = ({
 }: {
   children: JSX.Element[] | JSX.Element;
 }) => {
-  const [stock, setStock] = useState("");
-  const [stockInfo, setStockInfo] = useState({});
+  const [stocks, setStocks] = useState<any[]>([]);
 
-  const handleSetStock = (traceStock: string) => {
-    setStock(traceStock);
+  const handleSetStock = (traceStock: any) => {
+    setStocks([...stocks, traceStock]);
   };
 
-  const handleStockInfo = (stockPrices: any) => {
-    setStockInfo(stockPrices)
-  }
-
   return (
-    <StockContext.Provider value={{ stock, stockInfo, handleSetStock, handleStockInfo }}>
+    <StockContext.Provider
+      value={{
+        stocks,
+        handleSetStock,
+      }}
+    >
       {children}
     </StockContext.Provider>
   );

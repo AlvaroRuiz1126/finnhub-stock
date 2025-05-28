@@ -12,6 +12,7 @@
 
 .stock-header {
     background-color: #222;
+    display: flex;
     padding: 0 20px;
 }
 
@@ -19,8 +20,18 @@
     background-color: #222;
     border-right: 1px solid #363636;
     color: #fff;
+    display: inline-block;
+    flex: 1;
     min-width: 220px;
     padding: 10px 20px;
+}
+
+.stock-card__content--positive {
+    color: #1db954;
+}
+
+.stock-card__content--negative {
+    color: #f45b5b;
 }
 
 .stock-card__header {
@@ -44,11 +55,12 @@
 
 .stock-form__container {
     background-color: white;
-    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    flex: 1;
     max-width: 400px;
+    padding: 20px;
+    width: 100%;
 }
 
 .sotck-form {
@@ -58,14 +70,6 @@
     justify-content: center;
     gap: 10px;
 }
-
-/* .stock-form__select {
-    min-width: 220px;
-}
-
-.stock-form__input {
-    min-width: 220px;
-} */
 
 select,
 input {
@@ -92,10 +96,7 @@ input {
     background-color: #0056b3;
 }
 
-/* .stock-form__button {
-    background-color: #1db954;
-    border: none;
-    border-radius: 5px;
-    color: #fff;
-    padding: 7px;
-} */
+.stock-graph__container {
+    height: 80vh;
+    width: 75%;
+}
