@@ -44,8 +44,10 @@ export const StockForm = () => {
     if (!stockSelected) return;
 
     const stockInfo = await getStockPrice(stockSelected);
+    const subscribedStocks = JSON.parse(localStorage.getItem("subscribedStocks") || "[]");
 
     socket?.send(JSON.stringify({ type: "subscribe", symbol: stockSelected }));
+    localStorage.setItem("subscribedStocks", JSON.stringify([...subscribedStocks, stockSelected]));
     handleSetStock({
       ...stockInfo,
       symbol: stockSelected,
@@ -65,6 +67,10 @@ export const StockForm = () => {
 
   useEffect(() => {
     (async () => {
+      const cachedStocks = localStorage.getItem("stocks");
+
+      if(cachedStocks) setStocks(JSON.parse(cachedStocks));
+
       const response = await getPeers();
 
       setFilteredStocks(response);
