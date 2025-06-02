@@ -1,6 +1,7 @@
 import { useStockForm } from "../hooks";
 
 export const StockForm = () => {
+  // Custom hook to manage stock form logic and states handlers
   const {
     filteredStocks,
     openDropdown,
@@ -48,7 +49,7 @@ export const StockForm = () => {
 
         <input
           className="stock-form__input"
-          type="text"
+          type="number"
           placeholder="Value reference in USD"
           onChange={handleChangeReferencePriceValue}
           value={referencePrice}

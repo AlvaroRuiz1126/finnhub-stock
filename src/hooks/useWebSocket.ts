@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 let lastStockPrice = 0;
 
+// This hook manages the WebSocket connection to receive real-time stock updates
 export const useWebSocket = (
   wssPath: string,
   stocks: any[],
@@ -9,6 +10,7 @@ export const useWebSocket = (
 ) => {
   const [socket, setSocket] = useState<WebSocket>();
 
+  // Function to create a new WebSocket connection
   const createSocketConnection = useCallback(() => {
     const connection = new WebSocket(wssPath);
 
@@ -64,6 +66,7 @@ export const useWebSocket = (
   }, [wssPath, handleUpdateStocks]);
 
   useEffect(() => {
+    // Create the WebSocket connection when the component mounts
     createSocketConnection();
 
     const handleVisibilityChange = () => {
@@ -77,8 +80,10 @@ export const useWebSocket = (
       }
     };
 
+    // Add event listener for visibility change to manage WebSocket connection
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
+    // Cleanup function to close the WebSocket connection and remove event listener
     return () => {
       if (socket) {
         socket.close();

@@ -10,9 +10,11 @@ import {
 } from "recharts";
 import { StockContext } from "../context";
 
+// This component renders a Bar Chart to display stock prices
 export const StockGraph = () => {
   const { stocks } = useContext(StockContext);
 
+  // Memorize the data to aovid unnesessary re-renders
   const data = useMemo(() => {
     return stocks.map((stock) => ({
       name: stock.symbol,
@@ -20,9 +22,11 @@ export const StockGraph = () => {
     }));
   }, [stocks]);
 
+  // If there are no stocks, display a message indicating no data is available
   if (!data.length)
     return <div className="stock-graph__empty">No data available to graph</div>;
 
+  // Render the Bar Chart with the stock dats
   return (
     <div className="stock-graph__container">
       <ResponsiveContainer width="100%" height="100%">

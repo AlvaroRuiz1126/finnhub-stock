@@ -20,10 +20,12 @@ export const useStockForm = () => {
   const [stockSelected, setStockSelected] = useState("");
   const [searchStock, setSearchStock] = useState("");
 
+  // Function to toggle the dropdown visibility
   const handleOpenDropdown = () => {
     setOpenDropdown(!openDropdown)
   };
 
+  // Function to handle stock search input changes
   const handleSearchStock = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchStock(e.target.value);
     setFilteredStocks(
@@ -37,12 +39,14 @@ export const useStockForm = () => {
     if (e.target.value.trim() === "") setFilteredStocks(stocks);
   };
 
+  // Function to handle stock selection from the dropdown
   const handleSelectStock = (selectedStock: any) => {
     setStockSelected(selectedStock?.symbol || "");
     setSearchStock(`${selectedStock?.symbol} - ${selectedStock?.description}`);
     setOpenDropdown(false);
   };
 
+  // Function to handle form submission
   const handleSubmit = async (
     e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
   ) => {
@@ -71,6 +75,7 @@ export const useStockForm = () => {
     setFilteredStocks(stocks);
   };
 
+  // Function to handle changes in the reference price input
   const handleChangeReferencePriceValue = (
     e: ChangeEvent<HTMLInputElement>
   ) => {
@@ -79,10 +84,12 @@ export const useStockForm = () => {
 
   useEffect(() => {
     (async () => {
+      // Check if stocks are cahced in localStorage
       const cachedStocks = localStorage.getItem("stocks");
 
       if (cachedStocks) setStocks(JSON.parse(cachedStocks));
 
+      // If not cached, fetch stocks from Finnhub API
       const response = await getPeers();
 
       setFilteredStocks(response);
