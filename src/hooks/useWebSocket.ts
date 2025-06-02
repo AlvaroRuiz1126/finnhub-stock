@@ -30,11 +30,14 @@ export const useWebSocket = (
       console.log("Message from websocket data", JSON.parse(event.data));
       const message = JSON.parse(event.data);
 
+      // Check if the message type is 'trade' and handle the stock price update
       if (message.type === "trade") {
         console.log("trade event received");
+        // Calculate the percentage change from the last stock price
         const percentageChange =
           ((message.data[0].p - lastStockPrice) / lastStockPrice) * 100;
 
+        // Update the stock data with the new price and percentage change
         const newStocks = stocks.map((stock) => {
           if (stock.symbol === message.data[0].s) {
             return {
@@ -47,8 +50,10 @@ export const useWebSocket = (
           return stock;
         });
 
+        // Call the provided function to update the stocks in the context
         handleUpdateStocks(newStocks);
 
+        // Update the last stock price for future calculations
         lastStockPrice = message.data[0].p;
       }
     };

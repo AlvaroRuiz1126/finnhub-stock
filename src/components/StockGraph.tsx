@@ -12,6 +12,7 @@ import { StockContext } from "../context";
 
 // This component renders a Bar Chart to display stock prices
 export const StockGraph = () => {
+  // Use the StockContext to access the stocks data
   const { stocks } = useContext(StockContext);
 
   // Memorize the data to aovid unnesessary re-renders

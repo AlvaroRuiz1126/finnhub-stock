@@ -4,8 +4,10 @@ interface StockContext {
   handleSetStock: (traceStock: any) => void;
 }
 
+// Create a context for managing stock data
 export const StockContext = createContext({} as StockContext);
 
+// StockProvider component to provide stock data to the application
 export const StockProvider = ({
   children,
 }: {

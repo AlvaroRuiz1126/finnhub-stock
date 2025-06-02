@@ -15,6 +15,7 @@ export const StockForm = () => {
     handleSubmit,
   } = useStockForm();
 
+  // Render the stock form with input fields and dropdown for stock selection
   return (
     <div className="stock-form__container">
       <form className="sotck-form" onSubmit={handleSubmit}>

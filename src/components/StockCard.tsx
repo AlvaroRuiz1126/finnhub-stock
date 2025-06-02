@@ -3,6 +3,7 @@ import { StockContext } from "../context";
 
 // This component displays a card for each stock with its symbol, current price, and margin change
 export const StockCard = () => {
+  // Use the StockContext to access the stocks data
   const { stocks } = useContext(StockContext);
 
   // If there are no stocks, display a message indicating no stock is selected

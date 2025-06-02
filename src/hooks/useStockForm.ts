@@ -11,8 +11,10 @@ import { getPeers, getStockPrice } from "../api";
 import type { StockResponse } from "../interfaces";
 
 export const useStockForm = () => {
+  // Access the socket and stock context
   const { socket } = useContext(SocketContext);
   const { handleSetStock } = useContext(StockContext);
+  // Define state variables for managing stock data and UI interactions
   const [filteredStocks, setFilteredStocks] = useState<StockResponse[]>([]);
   const [openDropdown, setOpenDropdown] = useState(false);
   const [referencePrice, setReferencePrice] = useState("");

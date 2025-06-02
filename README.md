@@ -52,3 +52,14 @@ export default tseslint.config({
   },
 })
 ```
+## Run Development Environment
+
+1. Install `node_modules`
+2. Run the following command `yarn dev`
+3. Open in your Browser `http://localhost:5173/`
+
+## Test PWA
+
+1. Run the following command `yarn build`
+2. Execute the bundle with `yarn preview`
+3. Open in your Browser `http://localhost:4173/`
