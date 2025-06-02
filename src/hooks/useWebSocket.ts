@@ -57,6 +57,7 @@ export const useWebSocket = (
 
     connection.onclose = () => {
       console.log("WebSocket connection closed");
+      localStorage.removeItem("subscribedStocks");
     };
 
     setSocket(connection);
@@ -86,12 +87,6 @@ export const useWebSocket = (
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [wssPath]);
-
-  // useEffect(() => {
-  //   if (socket) {
-
-  //   }
-  // }, [stocks]);
 
   return { socket };
 };

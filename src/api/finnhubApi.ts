@@ -6,14 +6,13 @@ const fetchData = async (path: string) =>
 
 export const getPeers = async () => {
   const response = await fetchData("stock/symbol?exchange=US&currecny=USD");
-  // const response = await fetchData("forex/symbol?exchange=usd");
   const data = await response.json();
-  // console.log(
-  //   "common stock",
-  //   data.filter((stock: any) => stock.type === "Common Stock")
-  // );
+  const alphabeticalStocks = data.sort((a: any, b: any) =>
+    a.symbol.localeCompare(b.symbol)
+  ).slice(0, 3000);
+  localStorage.setItem("stocks", JSON.stringify(alphabeticalStocks));
 
-  return data;
+  return alphabeticalStocks;
 };
 
 export const getStockPrice = async (symbol: string) => {

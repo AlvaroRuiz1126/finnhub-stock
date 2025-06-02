@@ -11,14 +11,17 @@ import {
 import { StockContext } from "../context";
 
 export const StockGraph = () => {
-  const { stocks } = useContext(StockContext)
+  const { stocks } = useContext(StockContext);
 
   const data = useMemo(() => {
     return stocks.map((stock) => ({
       name: stock.symbol,
-      value: stock.c
-    }))
-  }, [stocks])
+      value: stock.c,
+    }));
+  }, [stocks]);
+
+  if (!data.length)
+    return <div className="stock-graph__empty">No data available to graph</div>;
 
   return (
     <div className="stock-graph__container">
@@ -36,12 +39,9 @@ export const StockGraph = () => {
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
-          <YAxis label={{ value: 'USD', angle: -90, position: 'insideLeft' }} />
+          <YAxis label={{ value: "USD", angle: -90, position: "insideLeft" }} />
           <Tooltip />
-          <Bar
-            dataKey="value"
-            fill="#8884d8"
-          />
+          <Bar dataKey="value" fill="#8884d8" />
         </BarChart>
       </ResponsiveContainer>
     </div>
